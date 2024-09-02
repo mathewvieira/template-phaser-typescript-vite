@@ -1,38 +1,56 @@
 import { Scene } from 'phaser'
 
 export class Game extends Scene {
-    camera: Phaser.Cameras.Scene2D.Camera
-    background: Phaser.GameObjects.Image
-    msg_text: Phaser.GameObjects.Text
+  private cursors: Phaser.Types.Input.Keyboard.CursorKeys
+  private player: Phaser.Physics.Arcade.Image
 
-    constructor() {
-        super('Game')
+  constructor() {
+    super('Game')
+  }
+
+  create() {
+    const terrainMap = this.make.tilemap({ key: 'terrain-map' })
+    const terrainTileset = terrainMap.addTilesetImage('terrain-tiles') ?? ''
+
+    const base = terrainMap.createLayer('base', terrainTileset)
+    if (!base) return
+    base.setCollisionByProperty({ collides: true })
+
+    // const debugGraphics = this.add.graphics().setAlpha(0.7)
+    // terrainMap.renderDebug(debugGraphics)
+
+    this.player = this.physics.add.sprite(500, 500, 'asher')
+    this.player.setOrigin(0)
+    this.player.setInteractive(this.input.makePixelPerfect())
+    this.player.setBounce(0.2)
+    this.player.setCollideWorldBounds(true)
+    this.player.setGravity(0, 6000)
+    this.player.setScale(1.25)
+
+    this.player.postFX.addShine(1, 0.5, 5)
+
+    this.cameras.main.setBounds(0, 0, 1024, 2048)
+    this.cameras.main.startFollow(this.player, true)
+    this.cameras.main.setZoom(4)
+
+    this.physics.add.collider(this.player, base)
+
+    if (this.input.keyboard) this.cursors = this.input.keyboard.createCursorKeys()
+  }
+
+  update() {
+    this.player.setVelocity(0)
+
+    if (this.cursors.left.isDown) {
+      this.player.setVelocityX(-600)
+    } else if (this.cursors.right.isDown) {
+      this.player.setVelocityX(600)
     }
 
-    create() {
-        this.camera = this.cameras.main
-        this.camera.setBackgroundColor(0x00ff00)
-
-        this.background = this.add.image(512, 384, 'background')
-        this.background.setAlpha(0.5)
-
-        this.msg_text = this.add.text(
-            512,
-            384,
-            'Make something fun!\nand share it with us:\nsupport@phaser.io',
-            {
-                fontFamily: 'Arial Black',
-                fontSize: 38,
-                color: '#ffffff',
-                stroke: '#000000',
-                strokeThickness: 8,
-                align: 'center',
-            },
-        )
-        this.msg_text.setOrigin(0.5)
-
-        this.input.once('pointerdown', () => {
-            this.scene.start('GameOver')
-        })
+    if (this.cursors.up.isDown) {
+      this.player.setVelocityY(-800)
+    } else if (this.cursors.down.isDown) {
+      this.player.setVelocityY(600)
     }
+  }
 }
