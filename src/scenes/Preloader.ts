@@ -31,7 +31,11 @@ export class Preloader extends Scene {
     this.load.image('terrain-tiles', 'sprites/tiles/terrain-32x32.png')
     this.load.tilemapTiledJSON('terrain-map', 'sprites/tiles/terrain-32x32.json')
 
-    this.load.image('asher', 'sprites/asher/asher.png')
+    this.load.atlas(
+      'rocketmouse',
+      'sprites/characters/rocketmouse/rocketmouse.png',
+      'sprites/characters/rocketmouse/rocketmouse.json'
+    )
 
     // this.load.atlas('captain', 'sprites/captain.png', 'sprites/captain.json')
   }
