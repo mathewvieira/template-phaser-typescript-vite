@@ -73,7 +73,7 @@
 					}
 				},
 				{
-					"filename": "rocketmouse_flying",
+					"filename": "rocketmouse_flying01",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -183,6 +183,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:5bfe149351145280a6c9f36e1c5b2e08:1d85d906d2cb27cfc184f8d99e16c007:4c11f64f23fbc3b15ea1f94be8a293a3$"
+		"smartupdate": "$TexturePacker:SmartUpdate:da545aa1643841afc6ee213f9ace7b3d:1d85d906d2cb27cfc184f8d99e16c007:4c11f64f23fbc3b15ea1f94be8a293a3$"
 	}
 }

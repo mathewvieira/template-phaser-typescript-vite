@@ -6,24 +6,44 @@ export class PlayerMovementHandler {
 
   constructor(public player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody) {}
 
-  handlePlayerMovement(keyPressed: KeyPressed) {
+  handlePlayerMovement(keyPressed: IKeyPressed) {
     this.player.setVelocityX(
       keyPressed.isLeftDown ? -PLAYER_MOVEMENT_SPEED : keyPressed.isRightDown ? PLAYER_MOVEMENT_SPEED : 0
     )
   }
 
-  handlePlayerSpriteDirection(keyPressed: KeyPressed) {
+  handlePlayerSpriteDirection(keyPressed: IKeyPressed) {
     if (keyPressed.isLeftDown) this.player.flipX = true
     if (keyPressed.isRightDown) this.player.flipX = false
   }
 
-  handlePlayerJump(keyPressed: KeyPressed) {
+  handlePlayerAnimation(keyPressed: IKeyPressed) {
+    const {} = keyPressed
+
+    if (this.player.texture.key == 'rocketmouse') {
+      let velocityX = Math.abs(this.player.body.velocity.x)
+      if (velocityX > 0) {
+        this.player.play('run', true)
+      }
+      if (velocityX === 0 && this.player.body.blocked.down) {
+        this.player.play('idle', true)
+      }
+      if (this.player.body.velocity.y < 0) {
+        this.player.play('flying', true)
+      }
+      if (this.player.body.velocity.y > 0) {
+        this.player.play('fall', true)
+      }
+    }
+  }
+
+  handlePlayerJump(keyPressed: IKeyPressed) {
     if (!this.player.body) return
 
     let canJump = false
     let canDoubleJump = false
 
-    if (keyPressed.isJumpJustDown) {
+    if (keyPressed.isUpJustDown) {
       canJump = true
 
       if (this.player.body.blocked.down) {

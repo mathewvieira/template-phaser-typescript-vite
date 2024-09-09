@@ -23,7 +23,6 @@ export class Preloader extends Scene {
   }
 
   preload() {
-    //  Load the assets for the game - Replace with your own assets
     this.load.setPath('assets')
 
     this.load.image('logo', 'img/logo.png')
@@ -37,14 +36,73 @@ export class Preloader extends Scene {
       'sprites/characters/rocketmouse/rocketmouse.json'
     )
 
-    // this.load.atlas('captain', 'sprites/captain.png', 'sprites/captain.json')
+    this.load.image('coward', 'sprites/characters/coward/coward.png')
+
+    this.load.image('backgroundTest', 'sprites/scenario/ghotic/background.png')
+    this.load.image('graveyard', 'sprites/scenario/ghotic/graveyard.png')
+    this.load.image('mountains', 'sprites/scenario/ghotic/mountains.png')
   }
 
   create() {
-    //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
-    //  For example, you can define global animations here, so we can use them in other scenes.
+    this.anims.create({
+      key: 'dead',
+      frames: this.anims.generateFrameNames('rocketmouse', {
+        prefix: 'rocketmouse_dead',
+        start: 2,
+        end: 2,
+        zeroPad: 2
+      }),
+      frameRate: 8
+    })
 
-    //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
+    this.anims.create({
+      key: 'run',
+      frames: this.anims.generateFrameNames('rocketmouse', {
+        prefix: 'rocketmouse_run',
+        start: 1,
+        end: 4,
+        zeroPad: 2
+      }),
+      frameRate: 8,
+      repeat: -1
+    })
+
+    this.anims.create({
+      key: 'fall',
+      frames: this.anims.generateFrameNames('rocketmouse', {
+        prefix: 'rocketmouse_fall',
+        start: 1,
+        end: 1,
+        zeroPad: 2
+      }),
+      frameRate: 8,
+      repeat: -1
+    })
+
+    this.anims.create({
+      key: 'idle',
+      frames: this.anims.generateFrameNames('rocketmouse', {
+        prefix: 'rocketmouse_run',
+        start: 1,
+        end: 1,
+        zeroPad: 2
+      }),
+      frameRate: 8,
+      repeat: -1
+    })
+
+    this.anims.create({
+      key: 'flying',
+      frames: this.anims.generateFrameNames('rocketmouse', {
+        prefix: 'rocketmouse_flying',
+        start: 1,
+        end: 1,
+        zeroPad: 2
+      }),
+      frameRate: 8,
+      repeat: -1
+    })
+
     this.scene.start('MainMenu')
   }
 }
