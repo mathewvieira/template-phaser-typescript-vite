@@ -6,18 +6,13 @@ export class Preloader extends Scene {
   }
 
   init() {
-    //  We loaded this image in our Boot Scene, so we can display it here
     this.add.image(512, 384, 'background')
 
-    //  A simple progress bar. This is the outline of the bar.
     this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff)
 
-    //  This is the progress bar itself. It will increase in size from the left based on the % of progress.
     const bar = this.add.rectangle(512 - 230, 384, 4, 28, 0xffffff)
 
-    //  Use the 'progress' event emitted by the LoaderPlugin to update the loading bar
     this.load.on('progress', (progress: number) => {
-      //  Update the progress bar (our bar is 464px wide, so 100% = 464px)
       bar.width = 4 + 460 * progress
     })
   }
@@ -30,17 +25,15 @@ export class Preloader extends Scene {
     this.load.image('terrain-tiles', 'sprites/tiles/terrain-32x32.png')
     this.load.tilemapTiledJSON('terrain-map', 'sprites/tiles/terrain-32x32.json')
 
-    this.load.atlas(
-      'rocketmouse',
-      'sprites/characters/rocketmouse/rocketmouse.png',
-      'sprites/characters/rocketmouse/rocketmouse.json'
-    )
+    this.load.atlas('rocketmouse', 'sprites/characters/rocketmouse/rocketmouse.png', 'sprites/characters/rocketmouse/rocketmouse.json')
+
+    this.load.image('bg-house', 'sprites/scenario/bg_repeat_340x640.png')
 
     this.load.image('coward', 'sprites/characters/coward/coward.png')
 
-    this.load.image('backgroundTest', 'sprites/scenario/ghotic/background.png')
-    this.load.image('graveyard', 'sprites/scenario/ghotic/graveyard.png')
-    this.load.image('mountains', 'sprites/scenario/ghotic/mountains.png')
+    this.load.image('bg-moon', 'sprites/scenario/ghotic/background.png')
+    this.load.image('bg-graveyard', 'sprites/scenario/ghotic/graveyard.png')
+    this.load.image('bg-mountains', 'sprites/scenario/ghotic/mountains.png')
   }
 
   create() {
@@ -50,9 +43,9 @@ export class Preloader extends Scene {
         prefix: 'rocketmouse_dead',
         start: 2,
         end: 2,
-        zeroPad: 2
+        zeroPad: 2,
       }),
-      frameRate: 8
+      frameRate: 8,
     })
 
     this.anims.create({
@@ -61,10 +54,10 @@ export class Preloader extends Scene {
         prefix: 'rocketmouse_run',
         start: 1,
         end: 4,
-        zeroPad: 2
+        zeroPad: 2,
       }),
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     })
 
     this.anims.create({
@@ -73,10 +66,10 @@ export class Preloader extends Scene {
         prefix: 'rocketmouse_fall',
         start: 1,
         end: 1,
-        zeroPad: 2
+        zeroPad: 2,
       }),
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     })
 
     this.anims.create({
@@ -85,10 +78,10 @@ export class Preloader extends Scene {
         prefix: 'rocketmouse_run',
         start: 1,
         end: 1,
-        zeroPad: 2
+        zeroPad: 2,
       }),
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     })
 
     this.anims.create({
@@ -97,10 +90,10 @@ export class Preloader extends Scene {
         prefix: 'rocketmouse_flying',
         start: 1,
         end: 1,
-        zeroPad: 2
+        zeroPad: 2,
       }),
       frameRate: 8,
-      repeat: -1
+      repeat: -1,
     })
 
     this.scene.start('MainMenu')

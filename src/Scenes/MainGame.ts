@@ -4,7 +4,7 @@ import { PlayerMovementHandler } from '../Handlers/PlayerMovementHandler'
 
 const IS_DEBUG_MODE = true
 
-export class Game extends Scene {
+export class MainGame extends Scene {
   private player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
   private terrainMap: Phaser.Tilemaps.Tilemap
   private terrainTileset: Phaser.Tilemaps.Tileset | ''
@@ -18,16 +18,20 @@ export class Game extends Scene {
   private debugInfo: Phaser.GameObjects.Text
 
   constructor() {
-    super('Game')
+    super('MainGame')
   }
 
   create() {
-    this.background = this.add.image(0, 0, 'backgroundTest').setOrigin(0, -0.2)
+    // TODO: Estudar GDD
+    //
+    // ADD: Commit Linter - https://prettier.io/docs/en/precommit.html
+
+    this.background = this.add.image(0, 0, 'bg-moon').setOrigin(0, -0.2)
     this.background.displayWidth = Number(this.game.config.width)
     this.background.displayHeight = Number(this.game.config.height) - 165
     this.background.setScrollFactor(0.05)
 
-    this.mountains = this.add.tileSprite(-512, 580, 2368, 320, 'mountains')
+    this.mountains = this.add.tileSprite(-512, 580, 2368, 320, 'bg-mountains')
     this.mountains.setOrigin(0, 0)
     // this.mountains.setScrollFactor(0.5)
 
@@ -63,22 +67,12 @@ export class Game extends Scene {
     let terrainWidth = this.terrainMap.width * tileWidth
     let terrainHeight = this.terrainMap.height * tileWidth
 
-    this.cameras.main.setBounds(
-      -widthPadding,
-      -heightPadding,
-      terrainWidth + widthPadding * 2,
-      terrainHeight + heightPadding - 100
-    )
+    this.cameras.main.setBounds(-widthPadding, -heightPadding, terrainWidth + widthPadding * 2, terrainHeight + heightPadding - 100)
     this.cameras.main.setZoom(2)
     this.cameras.main.startFollow(this.player, true)
     this.cameras.main.centerOn(0, 0)
 
-    this.physics.world.setBounds(
-      -widthPadding,
-      -heightPadding,
-      terrainWidth + widthPadding * 2,
-      terrainHeight + heightPadding
-    )
+    this.physics.world.setBounds(-widthPadding, -heightPadding, terrainWidth + widthPadding * 2, terrainHeight + heightPadding)
     this.physics.world.gravity.y = 300
     this.physics.add.existing(this.player)
     this.physics.add.collider(this.player, this.baseLayer)
@@ -90,7 +84,10 @@ export class Game extends Scene {
       this.terrainMap.renderDebug(this.debugMap)
       this.player.setDebug(true, true, 555)
 
-      this.debugInfo = this.add.text(240, 200, '', { font: '10px Courier', color: '#00ff00' })
+      this.debugInfo = this.add.text(240, 200, '', {
+        font: '10px Courier',
+        color: '#00ff00',
+      })
       this.debugInfo.setScrollFactor(0)
     }
 
@@ -141,7 +138,7 @@ export class Game extends Scene {
         '           world.bounds.x: ' + this.physics.world.bounds.x,
         '           world.bounds.y: ' + this.physics.world.bounds.y,
         '     world.bounds.centerX: ' + this.physics.world.bounds.centerX, //Centro X do Mundo
-        '     world.bounds.centerY: ' + this.physics.world.bounds.centerY //Centro Y do Mundo
+        '     world.bounds.centerY: ' + this.physics.world.bounds.centerY, //Centro Y do Mundo
       ])
     }
   }

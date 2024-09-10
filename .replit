@@ -1,5 +1,4 @@
-run = "yarn run dev"
-entrypoint = "main.ts"
+run = "yarn dev"
 
 hidden = [
   ".config",
@@ -8,10 +7,10 @@ hidden = [
   "vite.config.js",
   ".gitignore",
 ]
-modules = ["nodejs-20"]
+modules = ["nodejs-20", "web", "nix"]
 
 [nix]
-channel = "stable-21_11"
+channel = "stable-24_05"
 
 [env]
 PATH = "/home/runner/$REPL_SLUG/.config/npm/node_global/bin:/home/runner/$REPL_SLUG/node_modules/.bin"
@@ -47,3 +46,6 @@ start = ["typescript-language-server", "--stdio"]
 [[ports]]
 localPort = 5173
 externalPort = 80
+
+[deployment]
+run = ["sh", "-c", "yarn dev"]

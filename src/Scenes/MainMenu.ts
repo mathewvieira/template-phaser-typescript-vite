@@ -21,12 +21,12 @@ export class MainMenu extends Scene {
         color: '#ffffff',
         stroke: '#000000',
         strokeThickness: 8,
-        align: 'center'
+        align: 'center',
       })
       .setOrigin(0.5)
 
     this.input.once('pointerdown', () => {
-      this.scene.start('Game')
+      this.scene.start('InfiniteScroller')
     })
   }
 }

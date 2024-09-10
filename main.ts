@@ -1,8 +1,9 @@
-import { Boot } from './src/scenes/Boot'
-import { Game as MainGame } from './src/scenes/Game'
-import { GameOver } from './src/scenes/GameOver'
-import { MainMenu } from './src/scenes/MainMenu'
-import { Preloader } from './src/scenes/Preloader'
+import { Boot } from './src/Scenes/Boot'
+import { MainGame } from './src/Scenes/MainGame'
+import { GameOver } from './src/Scenes/GameOver'
+import { MainMenu } from './src/Scenes/MainMenu'
+import { InfiniteScroller } from './src/Scenes/InfiniteScroller'
+import { Preloader } from './src/Scenes/Preloader'
 
 import { Game, Types } from 'phaser'
 
@@ -18,17 +19,17 @@ const config: Types.Core.GameConfig = {
     arcade: {
       gravity: { x: 0, y: 300 },
       debug: true,
-      fps: 60
-    }
+      fps: 60,
+    },
   },
   scale: {
     mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH
+    autoCenter: Phaser.Scale.CENTER_BOTH,
   },
   input: {
-    keyboard: true
+    keyboard: true,
   },
-  scene: [Boot, Preloader, MainMenu, MainGame, GameOver]
+  scene: [Boot, Preloader, InfiniteScroller, MainMenu, MainGame, GameOver],
 }
 
 export default new Game(config)
