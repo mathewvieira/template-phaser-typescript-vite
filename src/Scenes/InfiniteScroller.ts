@@ -1,9 +1,19 @@
 import { Scene } from 'phaser'
 
-const IS_DEBUG_MODE = true
+import { IS_DEBUG_MODE } from '../Utils/Consts'
+
+import { TextureKeys } from '../Utils/TextureKeys'
+import { InputHandler } from '../Handlers/InputHandler'
+import { PlayerMovementHandler } from '../Handlers/PlayerMovementHandler'
 
 export class InfiniteScroller extends Scene {
+  private readonly PLAYER_JUMP_HEIGHT = 600
+  private readonly PLAYER_MOVEMENT_SPEED = 450
+  private readonly PLAYER_GRAVITY_Y = 500
+
   private player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
+  private inputHandler: InputHandler
+  private playerMovementHandler: PlayerMovementHandler
   private background: Phaser.GameObjects.TileSprite
 
   private debugInfo: Phaser.GameObjects.Text
@@ -16,23 +26,31 @@ export class InfiniteScroller extends Scene {
     const gameWidth = Number(this.game.config.width)
     const gameHeight = Number(this.game.config.height)
 
-    this.background = this.add.tileSprite(0, 0, gameWidth, gameHeight, 'bg-house')
+    this.background = this.add.tileSprite(0, 0, gameWidth, gameHeight, TextureKeys.HouseBackground.name)
     this.background.setOrigin(0, 0)
     this.background.displayHeight = gameHeight + 155
 
     this.cameras.main.setBounds(0, 0, gameWidth, gameHeight)
     this.cameras.main.centerOn(0, 0)
 
-    this.player = this.physics.add.sprite(gameWidth / 2, gameHeight / 2, 'rocketmouse')
+    this.player = this.physics.add.sprite(gameWidth / 2, gameHeight / 2, TextureKeys.RocketMouse.name)
+    this.player.setCollideWorldBounds(true)
+    this.player.setGravity(0, 300)
+    this.player.setScale(1.25)
 
-    this.physics.world.setBounds(0, 0, gameWidth, gameHeight)
-    this.physics.world.gravity.y = 300
-    this.physics.add.existing(this.player)
+    this.physics.world.setBounds(0, 0, gameWidth, gameHeight - 50)
+
+    this.inputHandler = new InputHandler(this.input)
+    this.playerMovementHandler = new PlayerMovementHandler(this.player, {
+      jumpHeight: this.PLAYER_JUMP_HEIGHT,
+      movementSpeed: this.PLAYER_MOVEMENT_SPEED,
+      gravityY: this.PLAYER_GRAVITY_Y
+    })
 
     if (IS_DEBUG_MODE) {
       this.debugInfo = this.add.text(-20, 10, '', {
         font: '12px Courier',
-        color: '#555555',
+        color: '#555555'
       })
       this.debugInfo.setScrollFactor(0)
     }
@@ -43,7 +61,9 @@ export class InfiniteScroller extends Scene {
   }
 
   update() {
-    this.background.tilePositionX += 2
+    this.playerMovementHandler.update(this.inputHandler.handleKeyboard())
+
+    this.background.tilePositionX += 1.1
 
     if (IS_DEBUG_MODE) {
       this.debugInfo.setText([
@@ -77,7 +97,7 @@ export class InfiniteScroller extends Scene {
         '           world.bounds.x: ' + this.physics.world.bounds.x,
         '           world.bounds.y: ' + this.physics.world.bounds.y,
         '     world.bounds.centerX: ' + this.physics.world.bounds.centerX, //Centro X do Mundo
-        '     world.bounds.centerY: ' + this.physics.world.bounds.centerY, //Centro Y do Mundo
+        '     world.bounds.centerY: ' + this.physics.world.bounds.centerY //Centro Y do Mundo
       ])
     }
   }

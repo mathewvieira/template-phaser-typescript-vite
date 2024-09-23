@@ -1,18 +1,20 @@
-import { Scene, GameObjects } from 'phaser'
+import { Scene } from 'phaser'
+
+import { TextureKeys } from '../Utils/TextureKeys'
 
 export class MainMenu extends Scene {
-  background: GameObjects.Image
-  logo: GameObjects.Image
-  title: GameObjects.Text
+  background: Phaser.GameObjects.Image
+  logo: Phaser.GameObjects.Image
+  title: Phaser.GameObjects.Text
 
   constructor() {
     super('MainMenu')
   }
 
   create() {
-    this.background = this.add.image(512, 384, 'background')
+    this.background = this.add.image(512, 384, TextureKeys.GradientBackground.name)
 
-    this.logo = this.add.image(512, 300, 'logo')
+    this.logo = this.add.image(512, 300, TextureKeys.MainLogo.name)
 
     this.title = this.add
       .text(512, 460, 'Main Menu', {

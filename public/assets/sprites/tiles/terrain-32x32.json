@@ -35,7 +35,7 @@
             35, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":30,
          "id":1,
-         "name":"base",
+         "name":"collision-layer",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
@@ -829,19 +829,6 @@
                          "value":true
                         }]
                 }],
-         "tilewidth":32
-        }, 
-        {
-         "columns":14,
-         "firstgid":86,
-         "image":"..\/..\/..\/..\/..\/..\/..\/Users\/mviei\/Downloads\/gothicvania-cemetery-files\/gothicvania-cemetery-files\/Assets\/PNG\/Environment\/tileset-sliced.png",
-         "imageheight":160,
-         "imagewidth":448,
-         "margin":0,
-         "name":"tileset-sliced",
-         "spacing":0,
-         "tilecount":70,
-         "tileheight":32,
          "tilewidth":32
         }],
  "tilewidth":32,
