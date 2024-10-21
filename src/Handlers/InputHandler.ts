@@ -1,18 +1,7 @@
-enum KeyCode {
-  LEFT = Phaser.Input.Keyboard.KeyCodes.LEFT,
-  RIGHT = Phaser.Input.Keyboard.KeyCodes.RIGHT,
-  UP = Phaser.Input.Keyboard.KeyCodes.UP,
-  DOWN = Phaser.Input.Keyboard.KeyCodes.DOWN,
-  SPACE = Phaser.Input.Keyboard.KeyCodes.SPACE,
-  SHIFT = Phaser.Input.Keyboard.KeyCodes.SHIFT,
-  W = Phaser.Input.Keyboard.KeyCodes.W,
-  A = Phaser.Input.Keyboard.KeyCodes.A,
-  S = Phaser.Input.Keyboard.KeyCodes.S,
-  D = Phaser.Input.Keyboard.KeyCodes.D
-}
+import { CustomKeyboard, KeyCode } from '../Utils/Types'
 
 export class InputHandler {
-  private keyboard: Record<KeyCode, Phaser.Input.Keyboard.Key>
+  private keyboard: CustomKeyboard
 
   constructor(public input: Phaser.Input.InputPlugin) {
     if (!this.input.keyboard) return
@@ -31,34 +20,38 @@ export class InputHandler {
     }
   }
 
-  handleKeyboard(): IKeyPressed {
-    const { LEFT, RIGHT, UP, DOWN, SPACE, W, A, S, D } = KeyCode
-
-    const isLeftDown = this.isKeyDown([LEFT, A])
-    const isRightDown = this.isKeyDown([RIGHT, D])
-    const isUpDown = this.isKeyDown([UP, W, SPACE])
-    const isDownDown = this.isKeyDown([DOWN, S])
-
-    const isLeftJustDown = this.isJustDown([LEFT, A])
-    const isRightJustDown = this.isJustDown([RIGHT, D])
-    const isUpJustDown = this.isJustDown([UP, W, SPACE])
-    const isDownJustDown = this.isJustDown([DOWN, S])
-
-    return {
-      isLeftDown,
-      isRightDown,
-      isUpDown,
-      isDownDown,
-      isLeftJustDown,
-      isRightJustDown,
-      isUpJustDown,
-      isDownJustDown
-    }
+  handleKeyboard(): CustomKeyboard {
+    return this.keyboard
   }
 
-  private isKeyDown(input: KeyCode): boolean
-  private isKeyDown(inputs: Array<KeyCode>): boolean
-  private isKeyDown(input: KeyCode | Array<KeyCode>): boolean {
+  // handleKeyboard(): IKeyPressed {
+  //   const { LEFT, RIGHT, UP, DOWN, SPACE, W, A, S, D } = KeyCode
+
+  //   const isLeftDown = this.isKeyDown([LEFT, A])
+  //   const isRightDown = this.isKeyDown([RIGHT, D])
+  //   const isUpDown = this.isKeyDown([UP, W, SPACE])
+  //   const isDownDown = this.isKeyDown([DOWN, S])
+
+  //   const isLeftJustDown = this.isJustDown([LEFT, A])
+  //   const isRightJustDown = this.isJustDown([RIGHT, D])
+  //   const isUpJustDown = this.isJustDown([UP, W, SPACE])
+  //   const isDownJustDown = this.isJustDown([DOWN, S])
+
+  //   return {
+  //     isLeftDown,
+  //     isRightDown,
+  //     isUpDown,
+  //     isDownDown,
+  //     isLeftJustDown,
+  //     isRightJustDown,
+  //     isUpJustDown,
+  //     isDownJustDown
+  //   }
+  // }
+
+  public isKeyDown(input: KeyCode): boolean
+  public isKeyDown(inputs: Array<KeyCode>): boolean
+  public isKeyDown(input: KeyCode | Array<KeyCode>): boolean {
     if (Array.isArray(input)) {
       return input.some((keyCode) => this.keyboard[keyCode].isDown)
     } else {
@@ -66,9 +59,9 @@ export class InputHandler {
     }
   }
 
-  private isJustDown(input: KeyCode): boolean
-  private isJustDown(inputs: Array<KeyCode>): boolean
-  private isJustDown(input: KeyCode | Array<KeyCode>): boolean {
+  public isJustDown(input: KeyCode): boolean
+  public isJustDown(inputs: Array<KeyCode>): boolean
+  public isJustDown(input: KeyCode | Array<KeyCode>): boolean {
     if (Array.isArray(input)) {
       return input.some((keyCode) => Phaser.Input.Keyboard.JustDown(this.keyboard[keyCode]))
     } else {

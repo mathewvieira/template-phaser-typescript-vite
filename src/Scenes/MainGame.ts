@@ -119,7 +119,7 @@ export class MainGame extends Scene {
   }
 
   update() {
-    this.playerMovementHandler.update(this.inputHandler.handleKeyboard())
+    this.playerMovementHandler.update(this.inputHandler)
 
     if (IS_DEBUG_MODE) {
       this.debugInfo.setText([

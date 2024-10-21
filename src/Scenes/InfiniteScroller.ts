@@ -37,6 +37,12 @@ export class InfiniteScroller extends Scene {
     this.player.setCollideWorldBounds(true)
     this.player.setGravity(0, 300)
     this.player.setScale(1.25)
+    this.player.setBodySize(125, 0, true)
+
+    this.player.setInteractive()
+    this.player.on('pointerover', () => {
+      console.log('pointerover')
+    })
 
     this.physics.world.setBounds(0, 0, gameWidth, gameHeight - 50)
 
@@ -61,7 +67,7 @@ export class InfiniteScroller extends Scene {
   }
 
   update() {
-    this.playerMovementHandler.update(this.inputHandler.handleKeyboard())
+    this.playerMovementHandler.update(this.inputHandler)
 
     this.background.tilePositionX += 1.1
 
