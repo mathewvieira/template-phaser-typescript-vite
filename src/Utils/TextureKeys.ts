@@ -8,7 +8,7 @@ export const TextureKeys = {
     map: 'sprites/tiles/terrain-32x32.json'
   },
 
-  HouseBackground: { name: 'bg-house', path: 'sprites/scenario/rocketmouse/bg-house-340x640.png' },
+  HouseBackground: { name: 'bg-house', path: 'sprites/scenario/house/bg-house-340x640.png' },
   RocketMouse: {
     name: 'char-rocketmouse',
     path: 'sprites/characters/rocketmouse/rocketmouse.png',

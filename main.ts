@@ -14,7 +14,7 @@ export default new Game({
   parent: 'game-container',
   backgroundColor: '#028af8',
   // antialias: false,
-  // pixelArt: true,
+  pixelArt: true,
   fps: { min: 30, target: 60 },
   physics: {
     default: 'arcade',
