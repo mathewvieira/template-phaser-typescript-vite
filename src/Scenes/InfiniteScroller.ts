@@ -1,7 +1,5 @@
 import { Scene } from 'phaser'
 
-import { IS_DEBUG_MODE } from '../Utils/Consts'
-
 import { TextureKeys } from '../Utils/TextureKeys'
 import { InputHandler } from '../Handlers/InputHandler'
 import { PlayerMovementHandler } from '../Handlers/PlayerMovementHandler'
@@ -26,20 +24,19 @@ export class InfiniteScroller extends Scene {
     const gameWidth = Number(this.game.config.width)
     const gameHeight = Number(this.game.config.height)
 
-    this.background = this.add.tileSprite(0, 0, gameWidth, gameHeight, TextureKeys.HouseBackground.name)
+    this.background = this.add.tileSprite(0, 0, gameWidth, gameHeight, TextureKeys.houseBackground.name)
     this.background.setOrigin(0, 0)
     this.background.displayHeight = gameHeight + 155
 
     this.cameras.main.setBounds(0, 0, gameWidth, gameHeight)
     this.cameras.main.centerOn(0, 0)
 
-    this.player = this.physics.add.sprite(gameWidth / 2, gameHeight / 2, TextureKeys.RocketMouse.name)
+    this.player = this.physics.add.sprite(gameWidth / 2, gameHeight / 2, TextureKeys.rocketMouse.name)
     this.player.setCollideWorldBounds(true)
     this.player.setGravity(0, 300)
     this.player.setScale(1.25)
     this.player.setBodySize(125, 0, true)
 
-    this.player.setInteractive()
     this.player.on('pointerover', () => {
       console.log('pointerover')
     })
@@ -53,7 +50,7 @@ export class InfiniteScroller extends Scene {
       gravityY: this.PLAYER_GRAVITY_Y
     })
 
-    if (IS_DEBUG_MODE) {
+    if (this.game.config.physics.arcade?.debug) {
       this.debugInfo = this.add.text(-20, 10, '', {
         font: '12px Courier',
         color: '#555555'
@@ -71,7 +68,7 @@ export class InfiniteScroller extends Scene {
 
     this.background.tilePositionX += 1.1
 
-    if (IS_DEBUG_MODE) {
+    if (this.game.config.physics.arcade?.debug) {
       this.debugInfo.setText([
         '               velocity.x: ' + this.player.body.velocity.x,
         '               velocity.y: ' + this.player.body.velocity.y,

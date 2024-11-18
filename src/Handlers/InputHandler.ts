@@ -24,48 +24,27 @@ export class InputHandler {
     return this.keyboard
   }
 
-  // handleKeyboard(): IKeyPressed {
-  //   const { LEFT, RIGHT, UP, DOWN, SPACE, W, A, S, D } = KeyCode
+  getKey(key: KeyCode): Phaser.Input.Keyboard.Key {
+    return this.keyboard[key]
+  }
 
-  //   const isLeftDown = this.isKeyDown([LEFT, A])
-  //   const isRightDown = this.isKeyDown([RIGHT, D])
-  //   const isUpDown = this.isKeyDown([UP, W, SPACE])
-  //   const isDownDown = this.isKeyDown([DOWN, S])
-
-  //   const isLeftJustDown = this.isJustDown([LEFT, A])
-  //   const isRightJustDown = this.isJustDown([RIGHT, D])
-  //   const isUpJustDown = this.isJustDown([UP, W, SPACE])
-  //   const isDownJustDown = this.isJustDown([DOWN, S])
-
-  //   return {
-  //     isLeftDown,
-  //     isRightDown,
-  //     isUpDown,
-  //     isDownDown,
-  //     isLeftJustDown,
-  //     isRightJustDown,
-  //     isUpJustDown,
-  //     isDownJustDown
-  //   }
-  // }
-
-  public isKeyDown(input: KeyCode): boolean
-  public isKeyDown(inputs: Array<KeyCode>): boolean
-  public isKeyDown(input: KeyCode | Array<KeyCode>): boolean {
-    if (Array.isArray(input)) {
-      return input.some((keyCode) => this.keyboard[keyCode].isDown)
+  public isKeyDown(key: KeyCode): boolean
+  public isKeyDown(keys: Array<KeyCode>): boolean
+  public isKeyDown(key: KeyCode | Array<KeyCode>): boolean {
+    if (Array.isArray(key)) {
+      return key.some(keyCode => this.keyboard[keyCode].isDown)
     } else {
-      return this.keyboard[input].isDown
+      return this.keyboard[key].isDown
     }
   }
 
-  public isJustDown(input: KeyCode): boolean
-  public isJustDown(inputs: Array<KeyCode>): boolean
-  public isJustDown(input: KeyCode | Array<KeyCode>): boolean {
-    if (Array.isArray(input)) {
-      return input.some((keyCode) => Phaser.Input.Keyboard.JustDown(this.keyboard[keyCode]))
+  public isJustDown(key: KeyCode): boolean
+  public isJustDown(keys: Array<KeyCode>): boolean
+  public isJustDown(key: KeyCode | Array<KeyCode>): boolean {
+    if (Array.isArray(key)) {
+      return key.some(keyCode => Phaser.Input.Keyboard.JustDown(this.keyboard[keyCode]))
     } else {
-      return Phaser.Input.Keyboard.JustDown(this.keyboard[input])
+      return Phaser.Input.Keyboard.JustDown(this.keyboard[key])
     }
   }
 }

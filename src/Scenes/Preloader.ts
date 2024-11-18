@@ -8,7 +8,7 @@ export class Preloader extends Scene {
   }
 
   init() {
-    this.add.image(512, 384, TextureKeys.GradientBackground.name)
+    this.add.image(512, 384, TextureKeys.gradientBackground.name)
 
     this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff)
 
@@ -22,27 +22,27 @@ export class Preloader extends Scene {
   preload() {
     this.load.setPath('assets')
 
-    this.load.image(TextureKeys.TerrainTiles.name, TextureKeys.TerrainTiles.path)
-    this.load.tilemapTiledJSON(TextureKeys.TerrainTiles.map, TextureKeys.TerrainTiles.map)
+    this.load.image(TextureKeys.terrainTiles.name, TextureKeys.terrainTiles.path)
+    this.load.tilemapTiledJSON(TextureKeys.terrainTiles.map, TextureKeys.terrainTiles.map)
 
-    this.load.image(TextureKeys.TerrainGothicTiles.name, TextureKeys.TerrainGothicTiles.path)
-    this.load.tilemapTiledJSON(TextureKeys.TerrainGothicTiles.map, TextureKeys.TerrainGothicTiles.map)
+    this.load.image(TextureKeys.terrainGothicTiles.name, TextureKeys.terrainGothicTiles.path)
+    this.load.tilemapTiledJSON(TextureKeys.terrainGothicTiles.map, TextureKeys.terrainGothicTiles.map)
 
-    this.load.atlas(TextureKeys.RocketMouse.name, TextureKeys.RocketMouse.path, TextureKeys.RocketMouse.map)
+    this.load.atlas(TextureKeys.rocketMouse.name, TextureKeys.rocketMouse.path, TextureKeys.rocketMouse.map)
 
-    this.load.image(TextureKeys.HouseBackground.name, TextureKeys.HouseBackground.path)
+    this.load.image(TextureKeys.houseBackground.name, TextureKeys.houseBackground.path)
 
-    this.load.image(TextureKeys.CowardDog.name, TextureKeys.CowardDog.path)
+    this.load.image(TextureKeys.cowardDog.name, TextureKeys.cowardDog.path)
 
-    this.load.image(TextureKeys.MoonBackground.name, TextureKeys.MoonBackground.path)
-    this.load.image(TextureKeys.GraveyardBackground.name, TextureKeys.GraveyardBackground.path)
-    this.load.image(TextureKeys.MountainsBackground.name, TextureKeys.MountainsBackground.path)
+    this.load.image(TextureKeys.moonBackground.name, TextureKeys.moonBackground.path)
+    this.load.image(TextureKeys.graveyardBackground.name, TextureKeys.graveyardBackground.path)
+    this.load.image(TextureKeys.mountainsBackground.name, TextureKeys.mountainsBackground.path)
   }
 
   create() {
     this.anims.create({
       key: 'dead',
-      frames: this.anims.generateFrameNames(TextureKeys.RocketMouse.name, {
+      frames: this.anims.generateFrameNames(TextureKeys.rocketMouse.name, {
         prefix: 'rocketmouse_dead',
         start: 2,
         end: 2,
@@ -53,7 +53,7 @@ export class Preloader extends Scene {
 
     this.anims.create({
       key: 'run',
-      frames: this.anims.generateFrameNames(TextureKeys.RocketMouse.name, {
+      frames: this.anims.generateFrameNames(TextureKeys.rocketMouse.name, {
         prefix: 'rocketmouse_run',
         start: 1,
         end: 4,
@@ -65,7 +65,7 @@ export class Preloader extends Scene {
 
     this.anims.create({
       key: 'fall',
-      frames: this.anims.generateFrameNames(TextureKeys.RocketMouse.name, {
+      frames: this.anims.generateFrameNames(TextureKeys.rocketMouse.name, {
         prefix: 'rocketmouse_fall',
         start: 1,
         end: 1,
@@ -77,7 +77,7 @@ export class Preloader extends Scene {
 
     this.anims.create({
       key: 'idle',
-      frames: this.anims.generateFrameNames(TextureKeys.RocketMouse.name, {
+      frames: this.anims.generateFrameNames(TextureKeys.rocketMouse.name, {
         prefix: 'rocketmouse_run',
         start: 1,
         end: 1,
@@ -89,7 +89,7 @@ export class Preloader extends Scene {
 
     this.anims.create({
       key: 'flying',
-      frames: this.anims.generateFrameNames(TextureKeys.RocketMouse.name, {
+      frames: this.anims.generateFrameNames(TextureKeys.rocketMouse.name, {
         prefix: 'rocketmouse_flying',
         start: 1,
         end: 1,

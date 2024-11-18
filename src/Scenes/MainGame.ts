@@ -1,10 +1,10 @@
 import { Scene } from 'phaser'
 
-import { IS_DEBUG_MODE } from '../Utils/Consts'
-
+import { isDebugMode } from '../Utils/Utils'
 import { TextureKeys } from '../Utils/TextureKeys'
 import { InputHandler } from '../Handlers/InputHandler'
 import { PlayerMovementHandler } from '../Handlers/PlayerMovementHandler'
+import { KeyCode } from '../Utils/Types'
 
 export class MainGame extends Scene {
   private readonly PLAYER_JUMP_HEIGHT = 220
@@ -14,7 +14,7 @@ export class MainGame extends Scene {
   private player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
   private terrainMap: Phaser.Tilemaps.Tilemap
   private terrainTileset: Phaser.Tilemaps.Tileset
-  private collisionLayer: Phaser.Tilemaps.TilemapLayer
+  private terrainLayer: Phaser.Tilemaps.TilemapLayer
   private inputHandler: InputHandler
   private playerMovementHandler: PlayerMovementHandler
   private background: Phaser.GameObjects.Image
@@ -28,15 +28,13 @@ export class MainGame extends Scene {
   }
 
   create() {
-    // TODO: Estudar GDD
-    //
     // ADD: Commit Linter - https://prettier.io/docs/en/precommit.html
 
     const gameWidth = Number(this.game.config.width)
     const gameHeight = Number(this.game.config.height)
 
     this.background = this.add
-      .image(0, 0, TextureKeys.MoonBackground.name)
+      .image(0, 0, TextureKeys.moonBackground.name)
       .setOrigin(0, -0.3105)
       .setDisplaySize(gameWidth - 100, gameHeight - 165)
       .setScrollFactor(0.05)
@@ -45,19 +43,19 @@ export class MainGame extends Scene {
     // this.terrainMap = this.make.tilemap({ key: TextureKeys.TerrainTiles.map })
     // this.terrainTileset = this.terrainMap.addTilesetImage(TextureKeys.TerrainTiles.name)!
 
-    this.terrainMap = this.make.tilemap({ key: TextureKeys.TerrainGothicTiles.map })
-    this.terrainTileset = this.terrainMap.addTilesetImage(TextureKeys.TerrainGothicTiles.name)!
+    this.terrainMap = this.make.tilemap({ key: TextureKeys.terrainGothicTiles.map })
+    this.terrainTileset = this.terrainMap.addTilesetImage(TextureKeys.terrainGothicTiles.name)!
 
-    this.collisionLayer = this.terrainMap // Must have the same layerID of the JSON's first layer name
-      .createLayer('collision-layer', this.terrainTileset)!
-      .setCollisionByProperty({ collides: true })
+    this.terrainLayer = this.terrainMap.createLayer('terrain', this.terrainTileset)!.setCollisionByProperty({ collides: true })
 
     this.player = this.physics.add
-      .sprite(gameWidth / 2, gameHeight / 2, TextureKeys.CowardDog.name)
-      .setOrigin(0)
+      .sprite(2688, 1600, TextureKeys.cowardDog.name)
+      // .setOrigin(0)
       .setGravity(0, 300)
       .setCollideWorldBounds(true)
       .setMaxVelocity(500, 500)
+      .setBodySize(26, 30, true)
+    // .setFriction(1, 1)
 
     this.player.postFX.addShine(1, 0.5, 5)
 
@@ -68,37 +66,46 @@ export class MainGame extends Scene {
       gravityY: this.PLAYER_GRAVITY_Y
     })
 
-    const widthPadding = gameWidth / 2
-    const heightPadding = gameHeight / 2
-    const terrainWidth = this.terrainMap.width * this.terrainMap.tileWidth
-    const terrainHeight = this.terrainMap.height * this.terrainMap.tileWidth
-    const worldWidth = terrainWidth + widthPadding * 2
+    const rightPadding = 600
+    const leftPadding = -rightPadding
+    const downPadding = 400
+    const topPadding = -downPadding
+    const widthPadding = rightPadding * 2
+    const heightPadding = downPadding * 2
+
+    const terrainWidth = this.terrainLayer.width
+    const terrainHeight = this.terrainLayer.height
+
+    const worldWidth = terrainWidth + widthPadding
     const worldHeight = terrainHeight + heightPadding
 
     this.cameras.main
-      .setBounds(-widthPadding, -heightPadding, worldWidth, worldHeight - 100)
+      .setBounds(leftPadding, topPadding, worldWidth, worldHeight - 100)
       .setZoom(2.2)
       .startFollow(this.player, true)
 
-    this.physics.world.setBounds(-widthPadding, -heightPadding, worldWidth, worldHeight)
-    this.physics.add.collider(this.player, this.collisionLayer)
+    this.physics.world.setBounds(leftPadding, topPadding, worldWidth, worldHeight)
 
-    this.mountains = this.add.tileSprite(
-      -widthPadding,
-      heightPadding,
-      worldWidth,
-      heightPadding,
-      TextureKeys.MountainsBackground.name
+    this.physics.add.collider(this.player, this.terrainLayer)
+
+    this.physics.add.overlap(
+      this.player,
+      this.terrainLayer,
+      this.checkClimbableTile as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback,
+      undefined,
+      this
     )
+
+    this.mountains = this.add.tileSprite(leftPadding, topPadding + 820, worldWidth, worldHeight, TextureKeys.mountainsBackground.name)
     this.mountains.setOrigin(0, 0)
     this.mountains.setScrollFactor(0.1)
 
     this.background.depth = 0
     this.mountains.depth = 1
-    this.collisionLayer.depth = 2
+    this.terrainLayer.depth = 2
     this.player.depth = 3
 
-    if (IS_DEBUG_MODE) {
+    if (isDebugMode()) {
       this.debugMap = this.add.graphics().setAlpha(0.7)
       this.terrainMap.renderDebug(this.debugMap)
       this.player.setDebug(true, true, 555)
@@ -119,9 +126,26 @@ export class MainGame extends Scene {
   }
 
   update() {
+    const canClimb = this.player.getData('canClimb')
+    // const climbableWorldPosition = this.player.getData('climbableWorldPosition')
     this.playerMovementHandler.update(this.inputHandler)
 
-    if (IS_DEBUG_MODE) {
+    if (canClimb) {
+      this.player.setGravityY(-300)
+      this.player.setVelocityY(0)
+
+      if (this.inputHandler.isKeyDown([KeyCode.UP, KeyCode.W])) {
+        this.player.setVelocityY(-150)
+      }
+
+      if (this.inputHandler.isKeyDown([KeyCode.DOWN, KeyCode.S])) {
+        this.player.setVelocityY(150)
+      }
+    } else {
+      this.player.setGravityY(this.PLAYER_GRAVITY_Y)
+    }
+
+    if (isDebugMode()) {
       this.debugInfo.setText([
         '               velocity.x: ' + this.player.body.velocity.x,
         '               velocity.y: ' + this.player.body.velocity.y,
@@ -156,5 +180,23 @@ export class MainGame extends Scene {
         '     world.bounds.centerY: ' + this.physics.world.bounds.centerY //Centro Y do Mundo
       ])
     }
+  }
+
+  public checkClimbableTile = () => {
+    const playerBounds = this.player.getBounds()
+
+    // Tiles na área de colisão do jogador
+    const tiles = this.terrainLayer.getTilesWithinWorldXY(
+      playerBounds.x + playerBounds.width / 2,
+      playerBounds.y,
+      0,
+      playerBounds.height,
+      undefined,
+      this.cameras.main
+    )
+
+    const canClimb = tiles.some(tile => tile.properties.climbable)
+
+    this.player.setData('canClimb', canClimb)
   }
 }

@@ -10,8 +10,8 @@ export class Boot extends Scene {
   preload() {
     this.load.setPath('assets')
 
-    this.load.image(TextureKeys.MainLogo.name, TextureKeys.MainLogo.path)
-    this.load.image(TextureKeys.GradientBackground.name, TextureKeys.GradientBackground.path)
+    this.load.image(TextureKeys.mainLogo.name, TextureKeys.mainLogo.path)
+    this.load.image(TextureKeys.gradientBackground.name, TextureKeys.gradientBackground.path)
   }
 
   create() {

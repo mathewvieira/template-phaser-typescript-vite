@@ -1,5 +1,5 @@
 import { TextureKeys } from '../Utils/TextureKeys'
-import { CustomKeyboard, KeyCode } from '../Utils/Types'
+import { KeyCode } from '../Utils/Types'
 import { InputHandler } from './InputHandler'
 
 interface IPlayerConfigs {
@@ -11,28 +11,24 @@ interface IPlayerConfigs {
 export class PlayerMovementHandler {
   private jumpCount = 0
   private input: InputHandler
-  private keyboard: CustomKeyboard
 
-  constructor(
-    public player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody,
-    public configs: IPlayerConfigs
-  ) {
+  constructor(public player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody, public configs: IPlayerConfigs) {
     this.player.body.setGravityY(this.configs.gravityY)
   }
 
   update(input: InputHandler) {
     this.input = input
-    this.keyboard = this.input.handleKeyboard()
 
-    this.handlePlayerMovement()
-    this.handlePlayerJump()
+    this.handleMovement()
+    this.handleJump()
+
+    this.handleSpriteDirection()
+    this.handleAnimation()
+
     this.handleJumpCountReset()
-    this.handlePlayerSpriteDirection()
-    this.handlePlayerAnimation()
-    this.handleVerticalJump()
   }
 
-  handlePlayerMovement() {
+  handleMovement() {
     this.player.setVelocityX(
       this.input.isKeyDown([KeyCode.LEFT, KeyCode.A])
         ? -this.configs.movementSpeed
@@ -41,19 +37,15 @@ export class PlayerMovementHandler {
         : 0
     )
 
-    if (this.player.texture.key === TextureKeys.RocketMouse.name) {
-      if (
-        this.player.body.blocked.down &&
-        !this.input.isKeyDown([KeyCode.LEFT, KeyCode.A]) &&
-        !this.input.isKeyDown([KeyCode.RIGHT, KeyCode.D])
-      ) {
+    if (this.player.texture.key === TextureKeys.rocketMouse.name) {
+      if (this.player.body.blocked.down && !this.input.isKeyDown([KeyCode.LEFT, KeyCode.A]) && !this.input.isKeyDown([KeyCode.RIGHT, KeyCode.D])) {
         this.player.setVelocityX(-this.configs.movementSpeed * 0.3)
       }
     }
   }
 
-  handlePlayerSpriteDirection() {
-    if (this.player.texture.key === TextureKeys.RocketMouse.name) {
+  handleSpriteDirection() {
+    if (this.player.texture.key === TextureKeys.rocketMouse.name) {
       if (this.input.isKeyDown([KeyCode.RIGHT, KeyCode.D]) && this.player.angle < 10) {
         this.player.angle += 1
         return
@@ -79,10 +71,15 @@ export class PlayerMovementHandler {
     if (this.input.isKeyDown([KeyCode.LEFT, KeyCode.A])) this.player.flipX = true
   }
 
-  handlePlayerAnimation() {
-    if (this.player.texture.key === TextureKeys.RocketMouse.name) {
+  handleAnimation() {
+    if (this.player.texture.key === TextureKeys.rocketMouse.name) {
       if (!this.player.body.blocked.down) {
-        this.player.body.velocity.y < 0 ? this.player.play('flying', true) : this.player.play('fall', true)
+        if (this.player.body.velocity.y < 0) {
+          this.player.play('flying', true)
+          return
+        }
+
+        this.player.play('fall', true)
         return
       }
 
@@ -91,10 +88,10 @@ export class PlayerMovementHandler {
     }
   }
 
-  handlePlayerJump() {
+  handleJump() {
     if (!this.input.isJustDown([KeyCode.UP, KeyCode.W, KeyCode.SPACE])) return
 
-    if (this.player.body.blocked.down) {
+    if (this.player.body.blocked.down || this.isWallJump()) {
       this.player.setVelocityY(-this.configs.jumpHeight)
       this.jumpCount++
       return
@@ -107,15 +104,11 @@ export class PlayerMovementHandler {
     }
   }
 
-  handleVerticalJump() {
-    if (
-      this.input.isKeyDown([KeyCode.UP, KeyCode.W, KeyCode.SPACE]) &&
-      (this.player.body.blocked.left || this.player.body.blocked.right)
-    )
-      this.player.setVelocityY(-this.configs.jumpHeight)
-  }
-
   handleJumpCountReset() {
     if (this.player.body.blocked.down) this.jumpCount = 0
+  }
+
+  isWallJump() {
+    return this.player.body.blocked.left || this.player.body.blocked.right
   }
 }

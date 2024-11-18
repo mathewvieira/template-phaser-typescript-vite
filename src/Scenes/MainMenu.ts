@@ -12,9 +12,9 @@ export class MainMenu extends Scene {
   }
 
   create() {
-    this.background = this.add.image(512, 384, TextureKeys.GradientBackground.name)
+    this.background = this.add.image(512, 384, TextureKeys.gradientBackground.name)
 
-    this.logo = this.add.image(512, 300, TextureKeys.MainLogo.name)
+    this.logo = this.add.image(512, 300, TextureKeys.mainLogo.name)
 
     this.title = this.add
       .text(512, 460, 'Main Menu', {
@@ -23,12 +23,12 @@ export class MainMenu extends Scene {
         color: '#ffffff',
         stroke: '#000000',
         strokeThickness: 8,
-        align: 'center',
+        align: 'center'
       })
       .setOrigin(0.5)
 
     this.input.once('pointerdown', () => {
-      this.scene.start('InfiniteScroller')
+      this.scene.start('MainGame')
     })
   }
 }

@@ -21,8 +21,8 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true
   },
-  "typeRoots": ["@types", "./node_modules/@types", "./node_modules/phaser/types"],
-  "types": ["Phaser"],
+  "typeRoots": ["@types", "../node_modules/@types", "../node_modules/phaser/types"],
+  "types": ["node", "Phaser"],
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }
