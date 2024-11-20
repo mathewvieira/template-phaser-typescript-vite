@@ -24,5 +24,7 @@ export const TextureKeys = {
     map: 'sprites/tiles/terrain-gothic-32x32.json'
   },
 
-  cowardDog: { name: 'char-cowarddog', path: 'sprites/characters/cowarddog/cowarddog.png' }
+  cowardDog: { name: 'char-cowarddog', path: 'sprites/characters/cowarddog/cowarddog.png' },
+
+  platformTile: { name: 'platform-tile', path: 'sprites/tiles/platform.png' }
 }

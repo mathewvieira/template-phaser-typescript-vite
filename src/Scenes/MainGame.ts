@@ -1,35 +1,35 @@
-import { Scene } from 'phaser'
-
 import { isDebugMode } from '../Utils/Utils'
 import { TextureKeys } from '../Utils/TextureKeys'
 import { InputHandler } from '../Handlers/InputHandler'
 import { PlayerMovementHandler } from '../Handlers/PlayerMovementHandler'
-import { KeyCode } from '../Utils/Types'
+import { DebugComponent } from '../Components/DebugComponent'
 
-export class MainGame extends Scene {
+export class MainGame extends Phaser.Scene {
   private readonly PLAYER_JUMP_HEIGHT = 220
   private readonly PLAYER_MOVEMENT_SPEED = 210
   private readonly PLAYER_GRAVITY_Y = 300
 
   private player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
+
   private terrainMap: Phaser.Tilemaps.Tilemap
   private terrainTileset: Phaser.Tilemaps.Tileset
   private terrainLayer: Phaser.Tilemaps.TilemapLayer
+
   private inputHandler: InputHandler
   private playerMovementHandler: PlayerMovementHandler
+
   private background: Phaser.GameObjects.Image
   private mountains: Phaser.GameObjects.TileSprite
 
-  private debugMap: Phaser.GameObjects.Graphics
-  private debugInfo: Phaser.GameObjects.Text
+  private debugComponent: DebugComponent
+
+  private loop: Phaser.Core.TimeStep
 
   constructor() {
     super('MainGame')
   }
 
   create() {
-    // ADD: Commit Linter - https://prettier.io/docs/en/precommit.html
-
     const gameWidth = Number(this.game.config.width)
     const gameHeight = Number(this.game.config.height)
 
@@ -40,22 +40,18 @@ export class MainGame extends Scene {
       .setScrollFactor(0.05)
       .setScale(2.2)
 
-    // this.terrainMap = this.make.tilemap({ key: TextureKeys.TerrainTiles.map })
-    // this.terrainTileset = this.terrainMap.addTilesetImage(TextureKeys.TerrainTiles.name)!
-
     this.terrainMap = this.make.tilemap({ key: TextureKeys.terrainGothicTiles.map })
     this.terrainTileset = this.terrainMap.addTilesetImage(TextureKeys.terrainGothicTiles.name)!
 
-    this.terrainLayer = this.terrainMap.createLayer('terrain', this.terrainTileset)!.setCollisionByProperty({ collides: true })
+    this.terrainLayer = this.terrainMap.createLayer('terrain', this.terrainTileset)!
+    this.terrainLayer.setCollisionByProperty({ collides: true })
 
     this.player = this.physics.add
-      .sprite(2688, 1600, TextureKeys.cowardDog.name)
-      // .setOrigin(0)
-      .setGravity(0, 300)
+      .sprite(3523, 1330, TextureKeys.cowardDog.name)
+      .setGravity(0, this.PLAYER_GRAVITY_Y)
       .setCollideWorldBounds(true)
       .setMaxVelocity(500, 500)
-      .setBodySize(26, 30, true)
-    // .setFriction(1, 1)
+      .setBodySize(26, 32, true)
 
     this.player.postFX.addShine(1, 0.5, 5)
 
@@ -85,7 +81,6 @@ export class MainGame extends Scene {
       .startFollow(this.player, true)
 
     this.physics.world.setBounds(leftPadding, topPadding, worldWidth, worldHeight)
-
     this.physics.add.collider(this.player, this.terrainLayer)
 
     this.physics.add.overlap(
@@ -100,103 +95,163 @@ export class MainGame extends Scene {
     this.mountains.setOrigin(0, 0)
     this.mountains.setScrollFactor(0.1)
 
-    this.background.depth = 0
-    this.mountains.depth = 1
-    this.terrainLayer.depth = 2
-    this.player.depth = 3
+    this.background.setDepth(0)
+    this.mountains.setDepth(1)
+    this.terrainLayer.setDepth(2)
+    this.player.setDepth(99)
 
     if (isDebugMode()) {
-      this.debugMap = this.add.graphics().setAlpha(0.7)
-      this.terrainMap.renderDebug(this.debugMap)
+      this.debugComponent = new DebugComponent(this)
+      this.debugComponent.renderTilemapDebug(this.terrainMap)
       this.player.setDebug(true, true, 555)
-
-      this.debugInfo = this.add.text(260, 210, '', {
-        font: '8px Courier',
-        color: '#00ff00'
-      })
-      this.debugInfo.setScrollFactor(0)
-
-      this.debugMap.depth = this.player.depth + 1
-      this.debugInfo.depth = this.player.depth + 2
     }
 
     this.input.once('pointerdown', () => {
       this.scene.start('GameOver')
     })
+
+    this.loop = this.game.loop
+
+    this.createMovingPlatformsFromTiles()
   }
 
   update() {
-    const canClimb = this.player.getData('canClimb')
-    // const climbableWorldPosition = this.player.getData('climbableWorldPosition')
+    this.checkFallTile()
+
     this.playerMovementHandler.update(this.inputHandler)
 
-    if (canClimb) {
-      this.player.setGravityY(-300)
-      this.player.setVelocityY(0)
-
-      if (this.inputHandler.isKeyDown([KeyCode.UP, KeyCode.W])) {
-        this.player.setVelocityY(-150)
-      }
-
-      if (this.inputHandler.isKeyDown([KeyCode.DOWN, KeyCode.S])) {
-        this.player.setVelocityY(150)
-      }
-    } else {
-      this.player.setGravityY(this.PLAYER_GRAVITY_Y)
-    }
-
-    if (isDebugMode()) {
-      this.debugInfo.setText([
-        '               velocity.x: ' + this.player.body.velocity.x,
-        '               velocity.y: ' + this.player.body.velocity.y,
-        '                gravity.x: ' + this.player.body.gravity.x,
-        '                gravity.y: ' + this.player.body.gravity.y,
-        '                    speed: ' + this.player.body.speed,
-        '                        x: ' + this.player.body.x,
-        '                        y: ' + this.player.body.y,
-        '',
-        '                 camera.x: ' + this.cameras.main.x,
-        '                 camera.y: ' + this.cameras.main.y,
-        '      camera.displayWidth: ' + this.cameras.main.displayWidth,
-        '     camera.displayHeight: ' + this.cameras.main.displayHeight,
-        '        camera.midPoint.x: ' + this.cameras.main.midPoint.x,
-        '        camera.midPoint.y: ' + this.cameras.main.midPoint.y,
-        '           camera.centerX: ' + this.cameras.main.centerX, //Centro X da Câmera
-        '           camera.centerY: ' + this.cameras.main.centerY, //Centro Y da Câmera
-        '',
-        '        game.config.width: ' + this.game.config.width,
-        '       game.config.height: ' + this.game.config.height,
-        '',
-        '                world.fps: ' + this.physics.world.fps,
-        '       world.bounds.width: ' + this.physics.world.bounds.width,
-        '      world.bounds.height: ' + this.physics.world.bounds.height,
-        '         world.bounds.top: ' + this.physics.world.bounds.top,
-        '      world.bounds.bottom: ' + this.physics.world.bounds.bottom,
-        '        world.bounds.left: ' + this.physics.world.bounds.left,
-        '       world.bounds.right: ' + this.physics.world.bounds.right,
-        '           world.bounds.x: ' + this.physics.world.bounds.x,
-        '           world.bounds.y: ' + this.physics.world.bounds.y,
-        '     world.bounds.centerX: ' + this.physics.world.bounds.centerX, //Centro X do Mundo
-        '     world.bounds.centerY: ' + this.physics.world.bounds.centerY //Centro Y do Mundo
-      ])
+    if (isDebugMode() && this.debugComponent) {
+      this.debugComponent.updateDebugInfo({ player: this.player, camera: this.cameras.main, game: this.game, world: this.physics.world })
     }
   }
 
-  public checkClimbableTile = () => {
-    const playerBounds = this.player.getBounds()
+  checkClimbableTile = (player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody, tile: Phaser.Tilemaps.Tile) => {
+    if (tile && tile.properties.climbable) {
+      const playerBounds = player.getBounds()
 
-    // Tiles na área de colisão do jogador
-    const tiles = this.terrainLayer.getTilesWithinWorldXY(
-      playerBounds.x + playerBounds.width / 2,
-      playerBounds.y,
-      0,
-      playerBounds.height,
-      undefined,
-      this.cameras.main
-    )
+      const tiles = this.terrainLayer.getTilesWithinWorldXY(
+        playerBounds.x + playerBounds.width / 2,
+        playerBounds.y,
+        0,
+        playerBounds.height,
+        undefined,
+        this.cameras.main
+      )
 
-    const canClimb = tiles.some(tile => tile.properties.climbable)
+      const canClimb = tiles.some(tile => tile.properties.climbable)
 
-    this.player.setData('canClimb', canClimb)
+      player.setData('canClimb', canClimb)
+    }
+  }
+
+  createMovingPlatformsFromTiles() {
+    this.terrainLayer.forEachTile(tile => {
+      if (!tile.properties.movesVertically && !tile.properties.movesHorizontally) return
+
+      const tileWorldXY = this.terrainLayer.tileToWorldXY(tile.x, tile.y)
+
+      const maxMove = tile.properties.maxMove || 100
+
+      let path: Phaser.Curves.Path | undefined = undefined
+
+      if (tile.properties.movesVertically) {
+        path = new Phaser.Curves.Path(tileWorldXY.x, tileWorldXY.y).lineTo(tileWorldXY.x, tileWorldXY.y + maxMove)
+      }
+
+      if (tile.properties.movesHorizontally) {
+        path = new Phaser.Curves.Path(tileWorldXY.x, tileWorldXY.y).lineTo(tileWorldXY.x + maxMove, tileWorldXY.y)
+      }
+
+      if (!path) return
+
+      const platform = this.add.follower(path, tileWorldXY.x, tileWorldXY.y, TextureKeys.platformTile.name)
+      platform.setDepth(3).setAlpha(0.5)
+
+      this.physics.add.existing(platform)
+
+      const platformBody = platform.body as Phaser.Physics.Arcade.Body
+      platformBody.setAllowGravity(false).setImmovable(true).setFriction(1)
+
+      this.physics.add.collider(
+        this.player,
+        platformBody,
+        this.checkCollisionBetweenPlayerAndPlatform as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback,
+        () => {
+          return this.isTopCollisionBetweenPlayerAndPlatform(this.player, platformBody)
+        },
+        this
+      )
+
+      this.terrainLayer.removeTileAt(tile.x, tile.y)
+
+      platform.startFollow({
+        duration: 3000,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+        onUpdate: () => {
+          platformBody.velocity.copy(platform.pathDelta).scale(1000 / this.loop.delta)
+        }
+      })
+    })
+  }
+
+  checkCollisionBetweenPlayerAndPlatform = (player: Phaser.Types.Physics.Arcade.GameObjectWithBody, platform: Phaser.Physics.Arcade.Body) => {
+    if (player.body.blocked.down && platform.touching.up) {
+      player.setData('isOnPlatform', true)
+      player.setData('currentPlatform', platform)
+    }
+  }
+
+  isTopCollisionBetweenPlayerAndPlatform = (player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody, platform: Phaser.Physics.Arcade.Body) => {
+    return platform.y > player.body.y
+  }
+
+  checkFallTile = () => {
+    if (this.player.body.blocked.down) {
+      const playerBounds = this.player.getBounds()
+
+      const playerBottomY = playerBounds.bottom
+
+      const playerXLeft = playerBounds.x
+      const tileBelowLeft = this.terrainLayer.getTileAtWorldXY(playerXLeft, playerBottomY)
+
+      const playerXRight = playerBounds.x + this.player.width - 5
+      const tileBelowRight = this.terrainLayer.getTileAtWorldXY(playerXRight, playerBottomY)
+
+      if (tileBelowLeft && tileBelowLeft.properties.falls) {
+        this.fallTile(tileBelowLeft)
+      }
+
+      if (tileBelowRight && tileBelowRight.properties.falls) {
+        this.fallTile(tileBelowRight)
+      }
+    }
+  }
+
+  fallTile = (tile: Phaser.Tilemaps.Tile) => {
+    this.time.addEvent({
+      delay: 350,
+      callback: () => {
+        tile.setCollision(false)
+
+        this.tweens.add({
+          targets: tile,
+          alpha: 0,
+          duration: 350,
+          onComplete: () => {
+            tile.alpha = 0
+
+            this.time.addEvent({
+              delay: 2000,
+              callback: () => {
+                tile.setAlpha(1)
+                tile.setCollision(true)
+              }
+            })
+          }
+        })
+      }
+    })
   }
 }

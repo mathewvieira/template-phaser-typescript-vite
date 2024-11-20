@@ -34,6 +34,8 @@ export class Preloader extends Scene {
 
     this.load.image(TextureKeys.cowardDog.name, TextureKeys.cowardDog.path)
 
+    this.load.image(TextureKeys.platformTile.name, TextureKeys.platformTile.path)
+
     this.load.image(TextureKeys.moonBackground.name, TextureKeys.moonBackground.path)
     this.load.image(TextureKeys.graveyardBackground.name, TextureKeys.graveyardBackground.path)
     this.load.image(TextureKeys.mountainsBackground.name, TextureKeys.mountainsBackground.path)
