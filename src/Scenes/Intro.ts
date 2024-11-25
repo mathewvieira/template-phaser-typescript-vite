@@ -1,10 +1,12 @@
-import { isDebugMode } from '../Utils/Utils'
+import { getGameSize, isDebugMode } from '../Utils/Utils'
 import { TextureKeys } from '../Utils/TextureKeys'
 import { InputHandler } from '../Handlers/InputHandler'
 import { PlayerMovementHandler } from '../Handlers/PlayerMovementHandler'
 import { DebugComponent } from '../Components/DebugComponent'
+import { FlyingCollectible } from '../Components/FlyingCollectible'
+import { PlayerHUD } from '../Components/PlayerHUD'
 
-export class MainGame extends Phaser.Scene {
+export class Intro extends Phaser.Scene {
   private readonly PLAYER_JUMP_HEIGHT = 220
   private readonly PLAYER_MOVEMENT_SPEED = 210
   private readonly PLAYER_GRAVITY_Y = 300
@@ -21,39 +23,51 @@ export class MainGame extends Phaser.Scene {
   private background: Phaser.GameObjects.Image
   private mountains: Phaser.GameObjects.TileSprite
 
+  private playerHUD: PlayerHUD
+
   private debugComponent: DebugComponent
 
   private loop: Phaser.Core.TimeStep
 
+  private collectibleRs: Phaser.Physics.Arcade.Group
+
   constructor() {
-    super('MainGame')
+    super('Intro')
   }
 
   create() {
-    const gameWidth = Number(this.game.config.width)
-    const gameHeight = Number(this.game.config.height)
+    const gameSize = getGameSize()
+    const gameSizeWidth = gameSize.width
+    const gameSizeHeight = gameSize.height
 
     this.background = this.add
       .image(0, 0, TextureKeys.moonBackground.name)
       .setOrigin(0, -0.3105)
-      .setDisplaySize(gameWidth - 100, gameHeight - 165)
+      .setDisplaySize(gameSizeWidth - 100, gameSizeHeight - 165)
       .setScrollFactor(0.05)
       .setScale(2.2)
 
-    this.terrainMap = this.make.tilemap({ key: TextureKeys.terrainGothicTiles.map })
-    this.terrainTileset = this.terrainMap.addTilesetImage(TextureKeys.terrainGothicTiles.name)!
+    this.terrainMap = this.make.tilemap({ key: TextureKeys.terrainTiles.map })
+    this.terrainTileset = this.terrainMap.addTilesetImage(TextureKeys.terrainTiles.name)!
 
     this.terrainLayer = this.terrainMap.createLayer('terrain', this.terrainTileset)!
     this.terrainLayer.setCollisionByProperty({ collides: true })
 
+    this.playerHUD = new PlayerHUD(this, this.input)
+
+    const playerSpawn = { x: 100, y: 750 }
+
     this.player = this.physics.add
-      .sprite(3523, 1330, TextureKeys.cowardDog.name)
+      .sprite(playerSpawn.x, playerSpawn.y, TextureKeys.annie.name)
       .setGravity(0, this.PLAYER_GRAVITY_Y)
       .setCollideWorldBounds(true)
       .setMaxVelocity(500, 500)
       .setBodySize(26, 32, true)
 
     this.player.postFX.addShine(1, 0.5, 5)
+
+    this.collectibleRs = this.physics.add.group({ allowGravity: false, immovable: true })
+    this.createFlyingCollectibleFromTiles()
 
     this.inputHandler = new InputHandler(this.input)
     this.playerMovementHandler = new PlayerMovementHandler(this.player, {
@@ -76,11 +90,13 @@ export class MainGame extends Phaser.Scene {
     const worldHeight = terrainHeight + heightPadding
 
     this.cameras.main
-      .setBounds(leftPadding, topPadding, worldWidth, worldHeight - 100)
+      .setBounds(leftPadding, topPadding, worldWidth, worldHeight - 437)
       .setZoom(2.2)
       .startFollow(this.player, true)
 
-    this.physics.world.setBounds(leftPadding, topPadding, worldWidth, worldHeight)
+    this.physics.world.setBounds(leftPadding, topPadding, worldWidth, worldHeight - 312)
+    this.player.body.onWorldBounds = true
+
     this.physics.add.collider(this.player, this.terrainLayer)
 
     this.physics.add.overlap(
@@ -90,6 +106,13 @@ export class MainGame extends Phaser.Scene {
       undefined,
       this
     )
+    this.physics.add.overlap(this.player, this.collectibleRs, this.collectR as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback, undefined, this)
+
+    this.physics.world.on('worldbounds', (body: Phaser.Physics.Arcade.Body, _: boolean, down: boolean) => {
+      if (body.gameObject === this.player && down) {
+        this.player.setPosition(playerSpawn.x, playerSpawn.y)
+      }
+    })
 
     this.mountains = this.add.tileSprite(leftPadding, topPadding + 820, worldWidth, worldHeight, TextureKeys.mountainsBackground.name)
     this.mountains.setOrigin(0, 0)
@@ -106,10 +129,6 @@ export class MainGame extends Phaser.Scene {
       this.player.setDebug(true, true, 555)
     }
 
-    this.input.once('pointerdown', () => {
-      this.scene.start('GameOver')
-    })
-
     this.loop = this.game.loop
 
     this.createMovingPlatformsFromTiles()
@@ -125,12 +144,27 @@ export class MainGame extends Phaser.Scene {
     }
   }
 
+  collectR = (_player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody, collectibleR: FlyingCollectible) => {
+    collectibleR.destroy()
+
+    if (this.playerHUD.addCollectiblePinToBar(this.collectibleRs.getLength() + 1)) {
+      this.playerMovementHandler.preventMovement(true)
+      const dialog = this.playerHUD.showDialogCollectedR(this.collectibleRs.getLength() + 1)
+
+      dialog.on('destroy', () => {
+        this.playerMovementHandler.preventMovement(false)
+      })
+    }
+  }
+
   checkClimbableTile = (player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody, tile: Phaser.Tilemaps.Tile) => {
+    let canClimb = false
+
     if (tile && tile.properties.climbable) {
       const playerBounds = player.getBounds()
 
       const tiles = this.terrainLayer.getTilesWithinWorldXY(
-        playerBounds.x + playerBounds.width / 2,
+        playerBounds.x + player.width / 2,
         playerBounds.y,
         0,
         playerBounds.height,
@@ -138,10 +172,22 @@ export class MainGame extends Phaser.Scene {
         this.cameras.main
       )
 
-      const canClimb = tiles.some(tile => tile.properties.climbable)
-
-      player.setData('canClimb', canClimb)
+      canClimb = tiles.some(tile => tile.properties.climbable)
     }
+
+    player.setData('canClimb', canClimb)
+  }
+
+  createFlyingCollectibleFromTiles() {
+    this.terrainLayer.forEachTile(tile => {
+      if (!tile.properties.isCollectible) return
+
+      const tileWorldXY = this.terrainLayer.tileToWorldXY(tile.x, tile.y)
+
+      this.collectibleRs.add(new FlyingCollectible(this, tileWorldXY.x + tile.width / 2, tileWorldXY.y + tile.width, 2.5, 2.5, 0.007), true)
+
+      this.terrainLayer.removeTileAt(tile.x, tile.y)
+    })
   }
 
   createMovingPlatformsFromTiles() {
@@ -164,8 +210,14 @@ export class MainGame extends Phaser.Scene {
 
       if (!path) return
 
-      const platform = this.add.follower(path, tileWorldXY.x, tileWorldXY.y, TextureKeys.platformTile.name)
-      platform.setDepth(3).setAlpha(0.5)
+      const platform = this.add.follower(
+        path,
+        tileWorldXY.x,
+        tileWorldXY.y,
+        tile.properties.movesVertically ? TextureKeys.whitePlatformTile.name : TextureKeys.bluePlatformTile.name
+      )
+
+      platform.setDepth(3)
 
       this.physics.add.existing(platform)
 
@@ -175,11 +227,11 @@ export class MainGame extends Phaser.Scene {
       this.physics.add.collider(
         this.player,
         platformBody,
-        this.checkCollisionBetweenPlayerAndPlatform as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback,
-        () => {
-          return this.isTopCollisionBetweenPlayerAndPlatform(this.player, platformBody)
-        },
-        this
+        this.checkCollisionBetweenPlayerAndPlatform as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback
+        // () => {
+        //   return this.isTopCollisionBetweenPlayerAndPlatform(this.player, platformBody)
+        // },
+        // this
       )
 
       this.terrainLayer.removeTileAt(tile.x, tile.y)
@@ -203,9 +255,9 @@ export class MainGame extends Phaser.Scene {
     }
   }
 
-  isTopCollisionBetweenPlayerAndPlatform = (player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody, platform: Phaser.Physics.Arcade.Body) => {
-    return platform.y > player.body.y
-  }
+  // isTopCollisionBetweenPlayerAndPlatform = (player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody, platform: Phaser.Physics.Arcade.Body) => {
+  //   // return platform.y > player.body.y
+  // }
 
   checkFallTile = () => {
     if (this.player.body.blocked.down) {

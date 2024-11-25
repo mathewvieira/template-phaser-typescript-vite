@@ -1,9 +1,4 @@
-interface IDebugObjects {
-  player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
-  camera: Phaser.Cameras.Scene2D.Camera
-  game: Phaser.Game
-  world: Phaser.Physics.Arcade.World
-}
+import { IDebugObjects } from '../Utils/Types'
 
 export class DebugComponent {
   private scene: Phaser.Scene
@@ -22,8 +17,8 @@ export class DebugComponent {
 
     this.debugInfo.setScrollFactor(0)
 
-    this.debugMap.depth = 99999
-    this.debugInfo.depth = this.debugMap.depth + 1
+    this.debugMap.setDepth(99999)
+    this.debugInfo.setDepth(this.debugMap.depth + 1)
   }
 
   renderTilemapDebug(tilemap: Phaser.Tilemaps.Tilemap) {

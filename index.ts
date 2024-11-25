@@ -1,3 +1,3 @@
-import { phaserGame } from './src/Game'
+import { PhaserGame } from './src/Game'
 
-phaserGame.resume()
+PhaserGame.resume()

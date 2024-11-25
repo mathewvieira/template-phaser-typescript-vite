@@ -14,3 +14,12 @@ export enum KeyCode {
 export const { LEFT, RIGHT, UP, DOWN, SPACE, W, A, S, D } = KeyCode
 
 export type CustomKeyboard = Record<KeyCode, Phaser.Input.Keyboard.Key>
+
+export type GameSize = { width: number; height: number }
+
+export interface IDebugObjects {
+  player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
+  camera: Phaser.Cameras.Scene2D.Camera
+  game: Phaser.Game
+  world: Phaser.Physics.Arcade.World
+}

@@ -1,12 +1,20 @@
 import { Game } from 'phaser'
 
+import RexUIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js'
+
 import { Boot } from './Scenes/Boot'
-import { MainGame } from './Scenes/MainGame'
+import { Intro } from './Scenes/Intro'
 import { GameOver } from './Scenes/GameOver'
-import { MainMenu } from './Scenes/MainMenu'
+import { Title } from './Scenes/Title'
 import { Preloader } from './Scenes/Preloader'
 
-export const phaserGame = new Game({
+declare module 'phaser' {
+  interface Scene {
+    rexUI: RexUIPlugin
+  }
+}
+
+export const PhaserGame = new Game({
   type: Phaser.AUTO,
   width: 1024,
   height: 768,
@@ -17,7 +25,7 @@ export const phaserGame = new Game({
   physics: {
     default: 'arcade',
     arcade: {
-      debug: true,
+      debug: false,
       gravity: { x: 0, y: 300 }
     }
   },
@@ -28,5 +36,14 @@ export const phaserGame = new Game({
   input: {
     keyboard: true
   },
-  scene: [Boot, Preloader, MainMenu, MainGame, GameOver]
+  scene: [Boot, Preloader, Title, Intro, GameOver],
+  plugins: {
+    scene: [
+      {
+        key: 'rexUI',
+        plugin: RexUIPlugin,
+        mapping: 'rexUI'
+      }
+    ]
+  }
 })

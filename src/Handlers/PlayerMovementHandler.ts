@@ -20,6 +20,8 @@ export class PlayerMovementHandler {
 
   private isJumping = false
 
+  private isPreventingMovement = false
+
   constructor(public player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody, public configs: IPlayerConfigs) {
     this.player.body.setGravityY(this.configs.gravityY)
   }
@@ -34,14 +36,22 @@ export class PlayerMovementHandler {
 
     this.isJumping = this.input.isJustDown([KeyCode.UP, KeyCode.W, KeyCode.SPACE])
 
-    this.handleMovement()
-    this.handleJump()
-    this.handleClimb()
+    if (!this.isPreventingMovement) {
+      this.handleMovement()
+      this.handleJump()
+      this.handleClimb()
 
-    this.handleSpriteDirection()
-    this.handleAnimation()
+      this.handleSpriteDirection()
+      this.handleAnimation()
 
-    this.handleJumpCountReset()
+      this.handleJumpCountReset()
+    }
+  }
+
+  preventMovement(value: boolean) {
+    this.isPreventingMovement = value
+    this.player.setVelocityX(0)
+    this.update(this.input)
   }
 
   handleMovement() {
