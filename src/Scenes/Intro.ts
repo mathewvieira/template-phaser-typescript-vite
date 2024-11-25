@@ -40,6 +40,9 @@ export class Intro extends Phaser.Scene {
     const gameSizeWidth = gameSize.width
     const gameSizeHeight = gameSize.height
 
+    const music = this.sound.add('background-music', { volume: 0.5 })
+    music.play()
+
     this.background = this.add
       .image(0, 0, TextureKeys.moonBackground.name)
       .setOrigin(0, -0.3105)

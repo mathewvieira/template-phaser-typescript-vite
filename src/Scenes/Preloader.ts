@@ -47,6 +47,8 @@ export class Preloader extends Scene {
     this.load.image(TextureKeys.moonBackground.name, TextureKeys.moonBackground.path)
     this.load.image(TextureKeys.graveyardBackground.name, TextureKeys.graveyardBackground.path)
     this.load.image(TextureKeys.mountainsBackground.name, TextureKeys.mountainsBackground.path)
+
+    this.load.audio('background-music', 'audio/greenHell.mp3')
   }
 
   create() {
