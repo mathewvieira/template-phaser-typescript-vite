@@ -18,12 +18,9 @@
     }
   ],
   "meta": {
-    "app": "https://www.codeandweb.com/texturepacker",
-    "version": "1.0",
     "image": "annie.png",
     "format": "RGBA8888",
     "size": { "w": 64, "h": 32 },
-    "scale": "1",
-    "smartupdate": "$TexturePacker:SmartUpdate:d137abebfab5aa37428edfb601a765b3:cb900e8e4964213a8a124054aea51146:0b56b9f18703c2a226b165cd3fa99a0b$"
+    "scale": "1"
   }
 }
