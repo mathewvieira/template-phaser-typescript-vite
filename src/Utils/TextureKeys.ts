@@ -30,6 +30,11 @@ export const TextureKeys = {
   wisteriaPetal: { name: 'wisteria-petal', path: 'sprites/tiles/wisteriaPetal.png' },
   greenLeave: { name: 'green-leave', path: 'sprites/tiles/greenLeave.png' },
 
-  annie: { name: 'annie', path: 'sprites/characters/annie/annie.png' },
+  annieVeron: {
+    name: 'char-annie',
+    path: 'sprites/characters/annie/annie.png',
+    map: 'sprites/characters/annie/annie.json'
+  },
+
   cowardDog: { name: 'char-cowarddog', path: 'sprites/characters/cowarddog/cowarddog.png' }
 }

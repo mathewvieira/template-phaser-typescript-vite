@@ -103,6 +103,8 @@ export class PlayerMovementHandler {
     //   this.player.play('run', true)
     //   return
     // }
+
+    this.player.play('idle', true)
   }
 
   handleJump() {

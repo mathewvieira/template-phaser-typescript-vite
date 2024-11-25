@@ -58,7 +58,7 @@ export class Intro extends Phaser.Scene {
     const playerSpawn = { x: 100, y: 750 }
 
     this.player = this.physics.add
-      .sprite(playerSpawn.x, playerSpawn.y, TextureKeys.annie.name)
+      .sprite(playerSpawn.x, playerSpawn.y, TextureKeys.annieVeron.name)
       .setGravity(0, this.PLAYER_GRAVITY_Y)
       .setCollideWorldBounds(true)
       .setMaxVelocity(500, 500)

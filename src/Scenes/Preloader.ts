@@ -28,7 +28,8 @@ export class Preloader extends Scene {
     this.load.image(TextureKeys.terrainGothicTiles.name, TextureKeys.terrainGothicTiles.path)
     this.load.tilemapTiledJSON(TextureKeys.terrainGothicTiles.map, TextureKeys.terrainGothicTiles.map)
 
-    this.load.image(TextureKeys.annie.name, TextureKeys.annie.path)
+    this.load.atlas(TextureKeys.annieVeron.name, TextureKeys.annieVeron.path, TextureKeys.annieVeron.map)
+
     this.load.image(TextureKeys.cowardDog.name, TextureKeys.cowardDog.path)
 
     this.load.image(TextureKeys.whitePlatformTile.name, TextureKeys.whitePlatformTile.path)
@@ -49,64 +50,17 @@ export class Preloader extends Scene {
   }
 
   create() {
-    // this.anims.create({
-    //   key: 'dead',
-    //   frames: this.anims.generateFrameNames(TextureKeys.rocketMouse.name, {
-    //     prefix: 'rocketmouse_dead',
-    //     start: 2,
-    //     end: 2,
-    //     zeroPad: 2
-    //   }),
-    //   frameRate: 8
-    // })
-
-    // this.anims.create({
-    //   key: 'run',
-    //   frames: this.anims.generateFrameNames(TextureKeys.rocketMouse.name, {
-    //     prefix: 'rocketmouse_run',
-    //     start: 1,
-    //     end: 4,
-    //     zeroPad: 2
-    //   }),
-    //   frameRate: 8,
-    //   repeat: -1
-    // })
-
-    // this.anims.create({
-    //   key: 'fall',
-    //   frames: this.anims.generateFrameNames(TextureKeys.rocketMouse.name, {
-    //     prefix: 'rocketmouse_fall',
-    //     start: 1,
-    //     end: 1,
-    //     zeroPad: 2
-    //   }),
-    //   frameRate: 8,
-    //   repeat: -1
-    // })
-
-    // this.anims.create({
-    //   key: 'idle',
-    //   frames: this.anims.generateFrameNames(TextureKeys.rocketMouse.name, {
-    //     prefix: 'rocketmouse_run',
-    //     start: 1,
-    //     end: 1,
-    //     zeroPad: 2
-    //   }),
-    //   frameRate: 8,
-    //   repeat: -1
-    // })
-
-    // this.anims.create({
-    //   key: 'flying',
-    //   frames: this.anims.generateFrameNames(TextureKeys.rocketMouse.name, {
-    //     prefix: 'rocketmouse_flying',
-    //     start: 1,
-    //     end: 1,
-    //     zeroPad: 2
-    //   }),
-    //   frameRate: 8,
-    //   repeat: -1
-    // })
+    this.anims.create({
+      key: 'idle',
+      frames: this.anims.generateFrameNames(TextureKeys.annieVeron.name, {
+        prefix: 'annie_idle',
+        start: 1,
+        end: 2,
+        zeroPad: 2
+      }),
+      frameRate: 1,
+      repeat: -1
+    })
 
     this.scene.start('Title')
   }
