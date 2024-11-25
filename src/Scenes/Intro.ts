@@ -40,7 +40,7 @@ export class Intro extends Phaser.Scene {
     const gameSizeWidth = gameSize.width
     const gameSizeHeight = gameSize.height
 
-    const music = this.sound.add('background-music', { volume: 0.5 })
+    const music = this.sound.add('background-music', { loop: true, volume: 0.5 })
     music.play()
 
     this.background = this.add
