@@ -44,37 +44,37 @@ export class PlayerHUD {
 
     switch (remainingToAdd) {
       case 7:
-        title = '1 - Repensar (7Rs)'
+        title = '1 - Repensar (7 Rs)'
         content = 'Avalie seus hábitos de consumo e\nconsidere escolhas mais sustentáveis.'
         break
 
       case 6:
-        title = '2 - Recusar (7Rs)'
+        title = '2 - Recusar (7 Rs)'
         content = 'Diga não a produtos que prejudicam o\nmeio ambiente ou que você não necessita.'
         break
 
       case 5:
-        title = '3 - Reduzir (7Rs)'
+        title = '3 - Reduzir (7 Rs)'
         content = 'Diminua o uso de recursos e a geração\nde resíduos no seu dia a dia.'
         break
 
       case 4:
-        title = '4 - Reutilizar (7Rs)'
+        title = '4 - Reutilizar (7 Rs)'
         content = 'Dê uma nova vida a objetos, utilizando-os\nde maneiras diferentes.'
         break
 
       case 3:
-        title = '5 - Reparar (7Rs)'
+        title = '5 - Reparar (7 Rs)'
         content = 'Conserte itens quebrados em vez de\ndescartá-los, prolongando sua utilidade.'
         break
 
       case 2:
-        title = '6 - Reciclar (7Rs)'
+        title = '6 - Reciclar (7 Rs)'
         content = 'Separe e encaminhe materiais recicláveis\npara a coleta seletiva adequada.'
         break
 
       case 1:
-        title = '7 - Reintegrar (7Rs)'
+        title = '7 - Reintegrar (7 Rs)'
         content = 'Incorpore materiais reciclados ou orgânicos\nde volta ao ciclo produtivo ou à natureza.'
         break
     }

@@ -159,7 +159,7 @@ export class Title extends Scene {
       quantity: 1,
       lifespan: 4250,
       gravityY: 85,
-      frequency: 1850,
+      frequency: 2300,
       speedX: { min: 100, max: 125 },
       speedY: { min: 25, max: 85 },
       scale: { min: 1.1, max: 1.85 },

@@ -1,4 +1,4 @@
-import { getGameSize, isDebugMode } from '../Utils/Utils'
+import { createDialog, getGameSize, isDebugMode } from '../Utils/Utils'
 import { TextureKeys } from '../Utils/TextureKeys'
 import { InputHandler } from '../Handlers/InputHandler'
 import { PlayerMovementHandler } from '../Handlers/PlayerMovementHandler'
@@ -45,7 +45,7 @@ export class Intro extends Phaser.Scene {
       .setOrigin(0, -0.3105)
       .setDisplaySize(gameSizeWidth - 100, gameSizeHeight - 165)
       .setScrollFactor(0.05)
-      .setScale(2.2)
+      .setScale(2.3)
 
     this.terrainMap = this.make.tilemap({ key: TextureKeys.terrainTiles.map })
     this.terrainTileset = this.terrainMap.addTilesetImage(TextureKeys.terrainTiles.name)!
@@ -55,7 +55,7 @@ export class Intro extends Phaser.Scene {
 
     this.playerHUD = new PlayerHUD(this, this.input)
 
-    const playerSpawn = { x: 100, y: 750 }
+    const playerSpawn = { x: 112.5, y: 1744.5 }
 
     this.player = this.physics.add
       .sprite(playerSpawn.x, playerSpawn.y, TextureKeys.annieVeron.name)
@@ -108,13 +108,13 @@ export class Intro extends Phaser.Scene {
     )
     this.physics.add.overlap(this.player, this.collectibleRs, this.collectR as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback, undefined, this)
 
-    this.physics.world.on('worldbounds', (body: Phaser.Physics.Arcade.Body, _: boolean, down: boolean) => {
-      if (body.gameObject === this.player && down) {
+    this.physics.world.on('worldbounds', (body: Phaser.Physics.Arcade.Body, top: boolean, down: boolean, left: boolean, right: boolean) => {
+      if (body.gameObject === this.player && (top || down || left || right)) {
         this.player.setPosition(playerSpawn.x, playerSpawn.y)
       }
     })
 
-    this.mountains = this.add.tileSprite(leftPadding, topPadding + 820, worldWidth, worldHeight, TextureKeys.mountainsBackground.name)
+    this.mountains = this.add.tileSprite(leftPadding, topPadding + 835, worldWidth, worldHeight, TextureKeys.mountainsBackground.name)
     this.mountains.setOrigin(0, 0)
     this.mountains.setScrollFactor(0.1)
 
@@ -152,6 +152,29 @@ export class Intro extends Phaser.Scene {
       const dialog = this.playerHUD.showDialogCollectedR(this.collectibleRs.getLength() + 1)
 
       dialog.on('destroy', () => {
+        if (this.collectibleRs.getLength() === 0) {
+          setTimeout(() => {
+            this.playerMovementHandler.preventMovement(true)
+
+            const userCompletedTheGameDialog = createDialog(
+              this,
+              this.input,
+              `Parabéns!`,
+              `Você coletou todos os 7 Rs da Sustentabilidade.
+              \nNo contexto atual das mudanças climáticas, essas
+              \nsão algumas das ações que podem ser realizadas
+              \npara preservar o nosso planeta.\n
+
+              \nEspero que tenha se divertido nesta breve aventura.
+              \nObrigado por jogar!!\n`
+            )
+
+            userCompletedTheGameDialog.on('destroy', () => {
+              this.scene.start('Title')
+            })
+          }, 2000)
+        }
+
         this.playerMovementHandler.preventMovement(false)
       })
     }
