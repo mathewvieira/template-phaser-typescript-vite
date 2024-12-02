@@ -16,10 +16,10 @@ const PhaserMsg = () => {
 export default defineConfig({
   base: './',
   logLevel: 'warning',
+  outDir: '../dist',
+  emptyOutDir: true,
+  assetsInlineLimit: 0,
   build: {
-    outDir: '../dist',
-    emptyOutDir: true,
-    assetsInlineLimit: 0,
     rollupOptions: {
       output: {
         manualChunks: {
