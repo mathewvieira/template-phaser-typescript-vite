@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { defineConfig } from 'vite'
 
 const PhaserMsg = () => {
@@ -7,11 +8,7 @@ const PhaserMsg = () => {
       process.stdout.write(`Building for production...\n`)
     },
     buildEnd() {
-      const line = '---------------------------------------------------------'
-      const msg = `❤️❤️❤️ Tell us about your game! - games@phaser.io ❤️❤️❤️`
-      process.stdout.write(`${line}\n${msg}\n${line}\n`)
-
-      process.stdout.write(`✨ Done ✨\n`)
+      process.stdout.write(`Finishing...\n`)
     }
   }
 }
@@ -20,6 +17,9 @@ export default defineConfig({
   base: './',
   logLevel: 'warning',
   build: {
+    outDir: '../dist',
+    emptyOutDir: true,
+    assetsInlineLimit: 0,
     rollupOptions: {
       output: {
         manualChunks: {

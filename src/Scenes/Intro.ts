@@ -31,6 +31,8 @@ export class Intro extends Phaser.Scene {
 
   private collectibleRs: Phaser.Physics.Arcade.Group
 
+  public music: Phaser.Sound.NoAudioSound | Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound
+
   constructor() {
     super('Intro')
   }
@@ -40,8 +42,8 @@ export class Intro extends Phaser.Scene {
     const gameSizeWidth = gameSize.width
     const gameSizeHeight = gameSize.height
 
-    const music = this.sound.add('background-music', { loop: true, volume: 0.5 })
-    music.play()
+    this.music = this.sound.add('background-music', { loop: true, volume: 0.5 })
+    this.music.play()
 
     this.background = this.add
       .image(0, 0, TextureKeys.moonBackground.name)
@@ -173,6 +175,7 @@ export class Intro extends Phaser.Scene {
             )
 
             userCompletedTheGameDialog.on('destroy', () => {
+              this.music.stop()
               this.scene.start('Title')
             })
           }, 2000)
